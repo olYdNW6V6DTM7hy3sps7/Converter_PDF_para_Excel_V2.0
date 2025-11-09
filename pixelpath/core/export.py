@@ -39,7 +39,7 @@ def extract_tables_to_dataframe(structured_data: Dict) -> pd.DataFrame:
     final_df = pd.concat(all_table_data, ignore_index=True)
     return final_df.drop(columns=["_table_index"], errors='ignore')
 
-    export_to_format(df: pd.DataFrame, file_format: str) -> Tuple[io.BytesIO, str, str]:
+    def export_to_format(df: pd.DataFrame, file_format: str) -> Tuple[io.BytesIO, str, str]:
     """
     Converte o DataFrame para o formato de arquivo binario especificado (CSV ou XLSX).
     Retorna o buffer, o tipo de midia e o cabeçalho de download.
