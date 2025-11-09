@@ -26,7 +26,7 @@ Exemplo: `https://github.com/SeuUsuario/PixelPath-Otimizado.git`
 
 ## 💻 2ª Parte: Conectando sua Pasta Local
 
-Abra o seu **Terminal/Prompt de Comando** e navegue até a pasta principal do seu projeto PixelPath (aquela que contém o `create_project.py`, o `requirements.txt` e a pasta `pixelpath/`).
+Abra o seu **Terminal/Prompt de Comando** e navegue até a pasta principal do seu projeto PixelPath (aquela que contém o `create_project_full.py`, o `requirements.txt` e a pasta `pixelpath/`).
 
 ### Passo 2.1: Inicializar o Git
 

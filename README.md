@@ -20,7 +20,7 @@ Se você executou este script (`create_project_full.py`), todos os arquivos e pa
 
 ### Passo 2: Instalar os Programas Auxiliares (Dependências)
 
-Você precisa instalar as bibliotecas Python que o PixelPath usa para funcionar.
+Você precisa instalar as bibliotecas Python que o PixelPath usa para funcionar, incluindo agora as bibliotecas de exportação para planilha (`pandas` e `openpyxl`).
 
 1.  Abra o seu **Prompt de Comando** (ou Terminal).
 2.  Navegue até a pasta onde você salvou o arquivo `requirements.txt` e o diretório `pixelpath`.
@@ -49,26 +49,25 @@ O PixelPath funciona como um serviço web local. Você precisa iniciá-lo.
 
 Com o servidor ligado (Passo 3), você pode enviar um arquivo PDF para que ele seja processado.
 
-**Opção 1: Usando uma Ferramenta de Teste de API (Recomendado para Iniciantes)**
+**O endpoint agora aceita o formato de saída como parâmetro de consulta:**
 
-Use ferramentas como **Insomnia** ou **Postman** para simular o upload do arquivo.
+* **URL:** `http://localhost:8000/extract?output_format=FORMATO`
+* **FORMATO:**
+    * `json` (Padrão: retorna o JSON estruturado)
+    * `csv` (Retorna o arquivo CSV binário)
+    * `xlsx` (Retorna o arquivo Excel binário)
 
-* **Método:** `POST`
-* **URL:** `http://localhost:8000/extract`
-* **Corpo da Requisição (Body):**
-    * Escolha a opção **form-data** (para enviar arquivos).
-    * Adicione um campo chamado `file` e use-o para selecionar o seu arquivo PDF.
-    * (Opcional) Adicione os campos `dpi` (qualidade, 72 a 200) e `max_pages` (limite de páginas a processar) para customizar a extração.
-
-**Opção 2: Usando o Comando `curl` (Mais técnico)**
-
-Se você tiver o `curl` instalado, pode testar diretamente no Prompt de Comando (substitua `/caminho/doc.pdf` pelo caminho real do seu arquivo):
+**Exemplo usando `curl` para XLSX:**
 
 ```bash
-curl -X POST "http://localhost:8000/extract?dpi=150&max_pages=50" -F "file=@/caminho/doc.pdf"
+curl -X POST "http://localhost:8000/extract?output_format=xlsx"      -H "accept: application/json"      -F "file=@/caminho/doc.pdf"      --output extraction_data.xlsx
 ```
 
-O resultado será exibido no seu Prompt de Comando como um grande texto em formato JSON contendo a estrutura de linhas e tabelas extraídas.
+**Exemplo usando `curl` para JSON (Estrutura):**
+
+```bash
+curl -X POST "http://localhost:8000/extract?output_format=json"      -F "file=@/caminho/doc.pdf"
+```
 
 ---
 
@@ -76,6 +75,6 @@ O resultado será exibido no seu Prompt de Comando como um grande texto em forma
 
 Este sistema foi projetado para ser **muito leve** e funcionar bem em ambientes restritos:
 
-* **Baixo Uso de CPU/Memória:** Ele renderiza as páginas em escala de cinza e usa a DPI mais baixa (150 DPI) para evitar que o uso de memória ultrapasse ~100 MB por página, muito abaixo do limite de 256 MB.
+* **Baixo Uso de CPU/Memória:** Ele renderiza as páginas em escala de cinza e usa a DPI mais baixa (150 DPI) para evitar que o uso de memória ultrapasse ~100 MB por página.
 * **Sem Paralelismo:** O processamento é limitado a 1 thread (`1 thread`), minimizando a carga sobre a CPU.
 * **Segurança (CORS):** Em produção (como no Render), o acesso é restrito apenas às URLs definidas na variável de ambiente `ALLOWED_ORIGINS`.
