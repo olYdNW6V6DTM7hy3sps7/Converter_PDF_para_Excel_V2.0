@@ -8,13 +8,34 @@ os.environ.setdefault("VECLIB_MAXIMUM_THREADS", "1")
 os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware # Importação necessária para CORS
 from .schemas import ExtractOptions
 from ..core.pipeline import process_pdf
 import tempfile
 import shutil
 import uvicorn
 
+# --- Configuração CORS ---
+# Lê as URLs permitidas da variável de ambiente (lista separada por vírgula)
+CORS_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*") 
+ALLOWED_HOSTS = CORS_ORIGINS.split(",") if CORS_ORIGINS != "*" else ["*"]
+
+# Se a variável estiver vazia ou com valor inválido, define como vazio para máxima restrição
+if not ALLOWED_HOSTS and CORS_ORIGINS != "*":
+    ALLOWED_HOSTS = []
+
 app = FastAPI(title="PixelPath API", version="0.1.0")
+
+# Adiciona o Middleware CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_HOSTS,        # As origens permitidas (lidas da variável de ambiente)
+    allow_credentials=True,             # Permite cookies de credenciais
+    allow_methods=["*"],                # Permite todos os métodos (POST, GET, etc.)
+    allow_headers=["*"],                # Permite todos os cabeçalhos
+)
+# -------------------------
+
 
 @app.get("/health")
 def health():
