@@ -84,6 +84,8 @@ def extract(
     except ValueError as ve:
          raise HTTPException(400, f"Erro de conversao: {ve}")
     except Exception as e:
+        # Em produção, logar o erro é ideal
+        print(f"Erro inesperado no processamento: {e}", file=sys.stderr)
         raise HTTPException(500, f"Erro no processamento: {e}")
         
     finally:

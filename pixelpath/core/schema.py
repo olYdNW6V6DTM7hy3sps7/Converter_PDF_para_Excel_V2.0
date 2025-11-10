@@ -11,10 +11,11 @@ def build_page_schema(page_index: int, size: Tuple[int, int], lines: List[List[D
             continue
             
         # bbox da linha é união das palavras
-        x1 = min(w["bbox"][0] for w in words)
-        y1 = min(w["bbox"][1] for w in words)
-        x2 = max(w["bbox"][2] for w in words)
-        y2 = max(w["bbox"][3] for w in words)
+        word_bboxes = [w["bbox"] for w in words]
+        x1 = min(b[0] for b in word_bboxes)
+        y1 = min(b[1] for b in word_bboxes)
+        x2 = max(b[2] for b in word_bboxes)
+        y2 = max(b[3] for b in word_bboxes)
         text = " ".join([w["text"] for w in words if w["text"]])
         
         line_items.append({

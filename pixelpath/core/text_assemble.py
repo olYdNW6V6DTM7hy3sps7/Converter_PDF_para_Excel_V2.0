@@ -15,18 +15,18 @@ def assemble_lines_and_words(boxes: np.ndarray, centers: np.ndarray):
     # agrupar por linha: ordenar por y centro e juntar por limiar
     idx = np.argsort(centers[:, 1])
     lines = []
-    current = [idx[0]]
     
-    for k in idx[1:]:
-        if abs(centers[k, 1] - centers[current[-1], 1]) <= med_h * 0.6:
-            current.append(k)
-        else:
+    if n > 0:
+        current = [idx[0]]
+        for k in idx[1:]:
+            if abs(centers[k, 1] - centers[current[-1], 1]) <= med_h * 0.6:
+                current.append(k)
+            else:
+                lines.append(current)
+                current = [k]
+        if current:
             lines.append(current)
-            current = [k]
-            
-    if current:
-        lines.append(current)
-        
+    
     # dentro de cada linha, ordenar por x e agrupar em palavras por gap
     all_lines = []
     gap_thr = max(2, int(med_w * 0.6))

@@ -91,13 +91,19 @@ def detect_gridless_tables_from_words(lines: List[List[Dict]], page_bbox: Tuple[
     ys_centers = np.array(ys_centers)
     
     # estimativas
-    widths = [w["bbox"][2] - w["bbox"][0] for w in word_items]
-    heights = [w["bbox"][3] - w["bbox"][1] for w in word_items]
-    med_w = max(8, int(np.median(widths)))
-    med_h = max(8, int(np.median(heights)))
+    if len(xs_centers) == 0:
+        return [] # Evita erro se não houver palavras
+        
+    widths = [w["bbox"][2] - w["bbox"][0] for w in word_items if w["bbox"][2] > w["bbox"][0]]
+    heights = [w["bbox"][3] - w["bbox"][1] for w in word_items if w["bbox"][3] > w["bbox"][1]]
+    
+    med_w = max(8, int(np.median(widths))) if widths else 8
+    med_h = max(8, int(np.median(heights))) if heights else 8
     
     # clusterização 1D barata por quantização
     def cluster_axis(vals, eps):
+        if len(vals) == 0:
+            return []
         vals_sorted = np.sort(vals)
         centers = []
         cur_grp = [vals_sorted[0]]
@@ -123,6 +129,8 @@ def detect_gridless_tables_from_words(lines: List[List[Dict]], page_bbox: Tuple[
     # limites entre centros adjacentes
     def edges_from_centers(centers, max_val):
         centers = sorted(centers)
+        if len(centers) == 0:
+            return []
         edges = []
         
         # borda antes do primeiro

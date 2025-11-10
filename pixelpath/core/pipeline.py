@@ -32,13 +32,18 @@ def process_pdf(path: str, dpi: int = 150, max_pages: int = 50) -> Dict:
     for i in range(n):
         # 1. Renderização e pré-processamento
         gray = render_page_gray(doc, i, dpi=dpi)
+        if gray.size == 0:
+            print(f"Aviso: Página {i} resultou em imagem vazia.")
+            continue
+        
         bin_img = binarize_gray(gray)
         
         # 2. Extração de Componentes Conexos (CCL)
         boxes, centers, areas = extract_components(bin_img)
         
         # 3. Refino (união de ilhas/acentos)
-        boxes, centers, areas = refine_merge_islands(boxes, centers, areas)
+        if boxes.shape[0] > 0:
+            boxes, centers, areas = refine_merge_islands(boxes, centers, areas)
         
         # 4. Agrupamento de texto
         lines = assemble_lines_and_words(boxes, centers)
